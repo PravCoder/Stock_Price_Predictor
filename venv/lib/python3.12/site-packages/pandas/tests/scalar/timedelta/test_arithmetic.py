@@ -309,13 +309,13 @@ class TestTimedeltaAdditionSubtraction:
 
     def test_td_add_sub_dt64_ndarray(self):
         td = Timedelta("1 day")
-        other = np.array(["2000-01-01"], dtype="M8[ns]")
+        other = pd.to_datetime(["2000-01-01"]).values
 
-        expected = np.array(["2000-01-02"], dtype="M8[ns]")
+        expected = pd.to_datetime(["2000-01-02"]).values
         tm.assert_numpy_array_equal(td + other, expected)
         tm.assert_numpy_array_equal(other + td, expected)
 
-        expected = np.array(["1999-12-31"], dtype="M8[ns]")
+        expected = pd.to_datetime(["1999-12-31"]).values
         tm.assert_numpy_array_equal(-td + other, expected)
         tm.assert_numpy_array_equal(other - td, expected)
 
@@ -966,7 +966,6 @@ class TestTimedeltaMultiplicationDivision:
 
 
 class TestTimedeltaComparison:
-    @pytest.mark.skip_ubsan
     def test_compare_pytimedelta_bounds(self):
         # GH#49021 don't overflow on comparison with very large pytimedeltas
 
@@ -1035,7 +1034,7 @@ class TestTimedeltaComparison:
         cls = tick_classes
 
         off = cls(4)
-        td = off._as_pd_timedelta
+        td = off.delta
         assert isinstance(td, Timedelta)
 
         assert td == off

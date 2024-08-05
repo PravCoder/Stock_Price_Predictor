@@ -42,11 +42,12 @@ def dowload_one_file_of_raw_data(symbol, start_date, end_date):
         'n': 'num_transactions',
         'vw': 'vw_avr_price'
     }, inplace=True)
-    print(df)
+    # print(df)
     
 
     path = f'../data/raw/prices_{start_date}-{end_date}.parquet'
     df.to_parquet(path, index=True)
+    return df  # return raw data
 
 
 def validate_raw_data(prices, start, end):
@@ -65,13 +66,13 @@ def interpolate_backfill_frontfill(prices):
     prices_interpolated.bfill(inplace=True)   # back-fill
     return prices_interpolated
 
-def add_missing_days(prices):
+def add_missing_days(prices, start_date, end_date):
     # convert datetime-column to datetime type and remove the time component
     prices['datetime'] = pd.to_datetime(prices['datetime'])
 
     # define date range
-    start_date = "2022-08-02"
-    end_date = "2024-08-02"
+    # start_date = "2022-08-02"
+    # end_date = "2024-08-02"
 
     full_date_range = pd.date_range(start=start_date, end=end_date, freq='D')
 
@@ -99,13 +100,13 @@ def add_missing_days(prices):
     prices_interpolated = interpolate_backfill_frontfill(prices)
     
     print("MISSING DATES")
-    missing_dates_df
+    # missing_dates_df
     return prices, prices_interpolated
 
 
 # RAW DATA TO TIME-SERIES DATA
-def transform_raw_data_into_ts_data(prices):
-    prices, prices_interpolated = add_missing_days(prices)
+def transform_raw_data_into_ts_data(prices, start_date, end_date):
+    prices, prices_interpolated = add_missing_days(prices, start_date, end_date)
     ts_prices = add_new_features(prices_interpolated)
     return ts_prices
 
@@ -194,3 +195,13 @@ def get_cutoff_indicies(data, n_previous_days, step_size):
 
 
 # DATA SPLIT
+from sklearn.model_selection import train_test_split
+
+def train_test_split_tabular(tabular_prices, target_column_name="target_close_price_next_day", test_size=0.2, random_state=42):
+    # seperate features/targets
+    X = tabular_prices.drop(columns=[target_column_name])
+    y = tabular_prices[target_column_name]
+
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=random_state)
+    
+    return X_train, X_test, y_train, y_test

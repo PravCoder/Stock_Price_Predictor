@@ -9,16 +9,13 @@ These are used for:
 from __future__ import annotations
 
 from typing import (
-    TYPE_CHECKING,
+    Any,
     NoReturn,
 )
 
 from pandas.core.base import PandasObject
 
 from pandas.io.formats.printing import pprint_thing
-
-if TYPE_CHECKING:
-    from pandas._typing import Self
 
 
 class FrozenList(PandasObject, list):
@@ -78,19 +75,19 @@ class FrozenList(PandasObject, list):
             return type(self)(super().__getitem__(n))
         return super().__getitem__(n)
 
-    def __radd__(self, other) -> Self:
+    def __radd__(self, other):
         if isinstance(other, tuple):
             other = list(other)
         return type(self)(other + list(self))
 
-    def __eq__(self, other: object) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if isinstance(other, (tuple, FrozenList)):
             other = list(other)
         return super().__eq__(other)
 
     __req__ = __eq__
 
-    def __mul__(self, other) -> Self:
+    def __mul__(self, other):
         return type(self)(super().__mul__(other))
 
     __imul__ = __mul__

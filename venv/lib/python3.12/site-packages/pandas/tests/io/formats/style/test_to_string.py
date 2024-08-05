@@ -2,10 +2,7 @@ from textwrap import dedent
 
 import pytest
 
-from pandas import (
-    DataFrame,
-    Series,
-)
+from pandas import DataFrame
 
 pytest.importorskip("jinja2")
 from pandas.io.formats.style import Styler
@@ -13,9 +10,7 @@ from pandas.io.formats.style import Styler
 
 @pytest.fixture
 def df():
-    return DataFrame(
-        {"A": [0, 1], "B": [-0.61, -1.22], "C": Series(["ab", "cd"], dtype=object)}
-    )
+    return DataFrame({"A": [0, 1], "B": [-0.61, -1.22], "C": ["ab", "cd"]})
 
 
 @pytest.fixture

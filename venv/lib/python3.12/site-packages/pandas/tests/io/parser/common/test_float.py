@@ -12,14 +12,9 @@ from pandas.compat import is_platform_linux
 from pandas import DataFrame
 import pandas._testing as tm
 
-pytestmark = pytest.mark.filterwarnings(
-    "ignore:Passing a BlockManager to DataFrame:DeprecationWarning"
-)
-xfail_pyarrow = pytest.mark.usefixtures("pyarrow_xfail")
-skip_pyarrow = pytest.mark.usefixtures("pyarrow_skip")
+pytestmark = pytest.mark.usefixtures("pyarrow_skip")
 
 
-@skip_pyarrow  # ParserError: CSV parse error: Empty CSV file or block
 def test_float_parser(all_parsers):
     # see gh-9565
     parser = all_parsers
@@ -40,14 +35,7 @@ def test_scientific_no_exponent(all_parsers_all_precisions):
     tm.assert_frame_equal(df_roundtrip, df)
 
 
-@pytest.mark.parametrize(
-    "neg_exp",
-    [
-        -617,
-        -100000,
-        pytest.param(-99999999999999999, marks=pytest.mark.skip_ubsan),
-    ],
-)
+@pytest.mark.parametrize("neg_exp", [-617, -100000, -99999999999999999])
 def test_very_negative_exponent(all_parsers_all_precisions, neg_exp):
     # GH#38753
     parser, precision = all_parsers_all_precisions
@@ -58,8 +46,6 @@ def test_very_negative_exponent(all_parsers_all_precisions, neg_exp):
     tm.assert_frame_equal(result, expected)
 
 
-@pytest.mark.skip_ubsan
-@xfail_pyarrow  # AssertionError: Attributes of DataFrame.iloc[:, 0] are different
 @pytest.mark.parametrize("exp", [999999999999999999, -999999999999999999])
 def test_too_many_exponent_digits(all_parsers_all_precisions, exp, request):
     # GH#38753
@@ -69,7 +55,7 @@ def test_too_many_exponent_digits(all_parsers_all_precisions, exp, request):
     if precision == "round_trip":
         if exp == 999999999999999999 and is_platform_linux():
             mark = pytest.mark.xfail(reason="GH38794, on Linux gives object result")
-            request.applymarker(mark)
+            request.node.add_marker(mark)
 
         value = np.inf if exp > 0 else 0.0
         expected = DataFrame({"data": [value]})

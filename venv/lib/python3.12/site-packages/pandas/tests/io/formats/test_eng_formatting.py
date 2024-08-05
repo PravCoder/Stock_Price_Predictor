@@ -1,39 +1,16 @@
 import numpy as np
-import pytest
 
-from pandas import (
-    DataFrame,
-    reset_option,
-    set_eng_float_format,
-)
+from pandas import DataFrame
+import pandas._testing as tm
 
-from pandas.io.formats.format import EngFormatter
-
-
-@pytest.fixture(autouse=True)
-def reset_float_format():
-    yield
-    reset_option("display.float_format")
+import pandas.io.formats.format as fmt
 
 
 class TestEngFormatter:
-    def test_eng_float_formatter2(self, float_frame):
-        df = float_frame
-        df.loc[5] = 0
-
-        set_eng_float_format()
-        repr(df)
-
-        set_eng_float_format(use_eng_prefix=True)
-        repr(df)
-
-        set_eng_float_format(accuracy=0)
-        repr(df)
-
     def test_eng_float_formatter(self):
         df = DataFrame({"A": [1.41, 141.0, 14100, 1410000.0]})
 
-        set_eng_float_format()
+        fmt.set_eng_float_format()
         result = df.to_string()
         expected = (
             "             A\n"
@@ -44,15 +21,17 @@ class TestEngFormatter:
         )
         assert result == expected
 
-        set_eng_float_format(use_eng_prefix=True)
+        fmt.set_eng_float_format(use_eng_prefix=True)
         result = df.to_string()
         expected = "         A\n0    1.410\n1  141.000\n2  14.100k\n3   1.410M"
         assert result == expected
 
-        set_eng_float_format(accuracy=0)
+        fmt.set_eng_float_format(accuracy=0)
         result = df.to_string()
         expected = "         A\n0    1E+00\n1  141E+00\n2   14E+03\n3    1E+06"
         assert result == expected
+
+        tm.reset_display_options()
 
     def compare(self, formatter, input, output):
         formatted_input = formatter(input)
@@ -74,7 +53,7 @@ class TestEngFormatter:
             self.compare(formatter, -input, "-" + output[1:])
 
     def test_exponents_with_eng_prefix(self):
-        formatter = EngFormatter(accuracy=3, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=3, use_eng_prefix=True)
         f = np.sqrt(2)
         in_out = [
             (f * 10**-24, " 1.414y"),
@@ -132,7 +111,7 @@ class TestEngFormatter:
         self.compare_all(formatter, in_out)
 
     def test_exponents_without_eng_prefix(self):
-        formatter = EngFormatter(accuracy=4, use_eng_prefix=False)
+        formatter = fmt.EngFormatter(accuracy=4, use_eng_prefix=False)
         f = np.pi
         in_out = [
             (f * 10**-24, " 3.1416E-24"),
@@ -190,7 +169,7 @@ class TestEngFormatter:
         self.compare_all(formatter, in_out)
 
     def test_rounding(self):
-        formatter = EngFormatter(accuracy=3, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=3, use_eng_prefix=True)
         in_out = [
             (5.55555, " 5.556"),
             (55.5555, " 55.556"),
@@ -201,7 +180,7 @@ class TestEngFormatter:
         ]
         self.compare_all(formatter, in_out)
 
-        formatter = EngFormatter(accuracy=1, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=1, use_eng_prefix=True)
         in_out = [
             (5.55555, " 5.6"),
             (55.5555, " 55.6"),
@@ -212,7 +191,7 @@ class TestEngFormatter:
         ]
         self.compare_all(formatter, in_out)
 
-        formatter = EngFormatter(accuracy=0, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=0, use_eng_prefix=True)
         in_out = [
             (5.55555, " 6"),
             (55.5555, " 56"),
@@ -223,14 +202,14 @@ class TestEngFormatter:
         ]
         self.compare_all(formatter, in_out)
 
-        formatter = EngFormatter(accuracy=3, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=3, use_eng_prefix=True)
         result = formatter(0)
         assert result == " 0.000"
 
     def test_nan(self):
         # Issue #11981
 
-        formatter = EngFormatter(accuracy=1, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=1, use_eng_prefix=True)
         result = formatter(np.nan)
         assert result == "NaN"
 
@@ -242,13 +221,14 @@ class TestEngFormatter:
             }
         )
         pt = df.pivot_table(values="a", index="b", columns="c")
-        set_eng_float_format(accuracy=1)
+        fmt.set_eng_float_format(accuracy=1)
         result = pt.to_string()
         assert "NaN" in result
+        tm.reset_display_options()
 
     def test_inf(self):
         # Issue #11981
 
-        formatter = EngFormatter(accuracy=1, use_eng_prefix=True)
+        formatter = fmt.EngFormatter(accuracy=1, use_eng_prefix=True)
         result = formatter(np.inf)
         assert result == "inf"

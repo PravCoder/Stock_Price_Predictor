@@ -5,12 +5,6 @@ from pandas import Categorical
 import pandas._testing as tm
 
 
-@pytest.fixture(params=[True, False])
-def allow_fill(request):
-    """Boolean 'allow_fill' parameter for Categorical.take"""
-    return request.param
-
-
 class TestTake:
     # https://github.com/pandas-dev/pandas/issues/20664
 

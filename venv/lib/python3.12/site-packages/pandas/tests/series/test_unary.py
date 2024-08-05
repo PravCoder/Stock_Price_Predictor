@@ -8,11 +8,13 @@ class TestSeriesUnaryOps:
     # __neg__, __pos__, __invert__
 
     def test_neg(self):
-        ser = Series(range(5), dtype="float64", name="series")
+        ser = tm.makeStringSeries()
+        ser.name = "series"
         tm.assert_series_equal(-ser, -1 * ser)
 
     def test_invert(self):
-        ser = Series(range(5), dtype="float64", name="series")
+        ser = tm.makeStringSeries()
+        ser.name = "series"
         tm.assert_series_equal(-(ser < 0), ~(ser < 0))
 
     @pytest.mark.parametrize(

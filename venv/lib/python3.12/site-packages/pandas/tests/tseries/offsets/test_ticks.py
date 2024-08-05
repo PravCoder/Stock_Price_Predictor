@@ -15,7 +15,6 @@ import numpy as np
 import pytest
 
 from pandas._libs.tslibs.offsets import delta_to_tick
-from pandas.errors import OutOfBoundsTimedelta
 
 from pandas import (
     Timedelta,
@@ -238,16 +237,6 @@ def test_tick_addition(kls, expected):
         assert result == expected
 
 
-def test_tick_delta_overflow():
-    # GH#55503 raise OutOfBoundsTimedelta, not OverflowError
-    tick = offsets.Day(10**9)
-    msg = "Cannot cast 1000000000 days 00:00:00 to unit='ns' without overflow"
-    depr_msg = "Day.delta is deprecated"
-    with pytest.raises(OutOfBoundsTimedelta, match=msg):
-        with tm.assert_produces_warning(FutureWarning, match=depr_msg):
-            tick.delta
-
-
 @pytest.mark.parametrize("cls", tick_classes)
 def test_tick_division(cls):
     off = cls(10)
@@ -256,24 +245,24 @@ def test_tick_division(cls):
     assert off / 2 == cls(5)
     assert off / 2.0 == cls(5)
 
-    assert off / off._as_pd_timedelta == 1
-    assert off / off._as_pd_timedelta.to_timedelta64() == 1
+    assert off / off.delta == 1
+    assert off / off.delta.to_timedelta64() == 1
 
-    assert off / Nano(1) == off._as_pd_timedelta / Nano(1)._as_pd_timedelta
+    assert off / Nano(1) == off.delta / Nano(1).delta
 
     if cls is not Nano:
         # A case where we end up with a smaller class
         result = off / 1000
         assert isinstance(result, offsets.Tick)
         assert not isinstance(result, cls)
-        assert result._as_pd_timedelta == off._as_pd_timedelta / 1000
+        assert result.delta == off.delta / 1000
 
     if cls._nanos_inc < Timedelta(seconds=1)._value:
         # Case where we end up with a bigger class
         result = off / 0.001
         assert isinstance(result, offsets.Tick)
         assert not isinstance(result, cls)
-        assert result._as_pd_timedelta == off._as_pd_timedelta / 0.001
+        assert result.delta == off.delta / 0.001
 
 
 def test_tick_mul_float():
@@ -295,7 +284,7 @@ def test_tick_mul_float():
 @pytest.mark.parametrize("cls", tick_classes)
 def test_tick_rdiv(cls):
     off = cls(10)
-    delta = off._as_pd_timedelta
+    delta = off.delta
     td64 = delta.to_timedelta64()
     instance__type = ".".join([cls.__module__, cls.__name__])
     msg = (
@@ -339,10 +328,7 @@ def test_tick_equalities(cls):
 
 @pytest.mark.parametrize("cls", tick_classes)
 def test_tick_offset(cls):
-    msg = f"{cls.__name__}.is_anchored is deprecated "
-
-    with tm.assert_produces_warning(FutureWarning, match=msg):
-        assert not cls().is_anchored()
+    assert not cls().is_anchored()
 
 
 @pytest.mark.parametrize("cls", tick_classes)
@@ -390,7 +376,7 @@ def test_compare_ticks_to_strs(cls):
 def test_compare_ticks_to_timedeltalike(cls):
     off = cls(19)
 
-    td = off._as_pd_timedelta
+    td = off.delta
 
     others = [td, td.to_timedelta64()]
     if cls is not Nano:

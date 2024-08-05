@@ -1,6 +1,5 @@
 from typing import Any
-
-from numpy.lib._index_tricks_impl import AxisConcatenator
+from numpy.lib.index_tricks import AxisConcatenator
 
 from numpy.ma.core import (
     dot as dot,

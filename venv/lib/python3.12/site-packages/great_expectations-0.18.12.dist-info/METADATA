@@ -1,0 +1,184 @@
+Metadata-Version: 2.1
+Name: great-expectations
+Version: 0.18.12
+Summary: Always know what to expect from your data.
+Home-page: https://greatexpectations.io
+Author: The Great Expectations Team
+Author-email: team@greatexpectations.io
+License: Apache-2.0
+Download-URL: https://github.com/great-expectations/great_expectations
+Keywords: data science testing pipeline data quality dataquality validation datavalidation
+Platform: UNKNOWN
+Classifier: Development Status :: 4 - Beta
+Classifier: Intended Audience :: Developers
+Classifier: Intended Audience :: Science/Research
+Classifier: Intended Audience :: Other Audience
+Classifier: Topic :: Scientific/Engineering
+Classifier: Topic :: Software Development
+Classifier: Topic :: Software Development :: Testing
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Requires-Python: >=3.8
+Requires-Dist: altair <5.0.0,>=4.2.1
+Requires-Dist: Click >=7.1.2
+Requires-Dist: colorama >=0.4.3
+Requires-Dist: cryptography >=3.2
+Requires-Dist: Ipython >=7.16.3
+Requires-Dist: ipywidgets >=7.5.1
+Requires-Dist: jinja2 >=2.10
+Requires-Dist: jsonpatch >=1.22
+Requires-Dist: jsonschema >=2.5.1
+Requires-Dist: makefun <2,>=1.7.0
+Requires-Dist: marshmallow <4.0.0,>=3.7.1
+Requires-Dist: mistune >=0.8.4
+Requires-Dist: nbformat >=5.0
+Requires-Dist: notebook >=6.4.10
+Requires-Dist: packaging
+Requires-Dist: pydantic >=1.9.2
+Requires-Dist: pyparsing >=2.4
+Requires-Dist: python-dateutil >=2.8.1
+Requires-Dist: pytz >=2021.3
+Requires-Dist: requests >=2.20
+Requires-Dist: ruamel.yaml <0.17.18,>=0.16
+Requires-Dist: scipy >=1.6.0
+Requires-Dist: tqdm >=4.59.0
+Requires-Dist: typing-extensions >=3.10.0.0
+Requires-Dist: tzlocal >=1.2
+Requires-Dist: urllib3 >=1.26
+Requires-Dist: pandas >=1.1.0 ; python_version <= "3.8"
+Requires-Dist: numpy <2.0.0,>=1.20.3 ; python_version == "3.8"
+Requires-Dist: numpy <2.0.0,>=1.21.6 ; python_version == "3.9"
+Requires-Dist: pandas >=1.1.3 ; python_version == "3.9"
+Requires-Dist: numpy <2.0.0,>=1.22.4 ; python_version >= "3.10"
+Requires-Dist: pandas >=1.3.0 ; python_version >= "3.10"
+Provides-Extra: arrow
+Requires-Dist: feather-format >=0.4.1 ; extra == 'arrow'
+Requires-Dist: pyarrow ; extra == 'arrow'
+Provides-Extra: athena
+Requires-Dist: pyathena[sqlalchemy] <3,>=2.0.0 ; extra == 'athena'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'athena'
+Provides-Extra: aws_secrets
+Requires-Dist: boto3 >=1.17.106 ; extra == 'aws_secrets'
+Provides-Extra: azure
+Requires-Dist: azure-identity >=1.10.0 ; extra == 'azure'
+Requires-Dist: azure-keyvault-secrets >=4.0.0 ; extra == 'azure'
+Requires-Dist: azure-storage-blob >=12.5.0 ; extra == 'azure'
+Provides-Extra: azure_secrets
+Requires-Dist: azure-identity >=1.10.0 ; extra == 'azure_secrets'
+Requires-Dist: azure-keyvault-secrets >=4.0.0 ; extra == 'azure_secrets'
+Requires-Dist: azure-storage-blob >=12.5.0 ; extra == 'azure_secrets'
+Provides-Extra: bigquery
+Requires-Dist: gcsfs >=0.5.1 ; extra == 'bigquery'
+Requires-Dist: google-cloud-bigquery >=3.3.6 ; extra == 'bigquery'
+Requires-Dist: google-cloud-bigquery-storage >=2.20.0 ; extra == 'bigquery'
+Requires-Dist: google-cloud-secret-manager >=1.0.0 ; extra == 'bigquery'
+Requires-Dist: sqlalchemy-bigquery >=1.3.0 ; extra == 'bigquery'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'bigquery'
+Requires-Dist: google-cloud-storage >=1.28.0 ; (python_version < "3.11") and extra == 'bigquery'
+Requires-Dist: google-cloud-storage >=2.10.0 ; (python_version >= "3.11") and extra == 'bigquery'
+Provides-Extra: clickhouse
+Requires-Dist: clickhouse-sqlalchemy >=0.2.2 ; extra == 'clickhouse'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'clickhouse'
+Requires-Dist: pandas <2.2.0 ; (python_version >= "3.9") and extra == 'clickhouse'
+Provides-Extra: cloud
+Requires-Dist: great-expectations-cloud >=0.0.3.dev5 ; extra == 'cloud'
+Requires-Dist: orjson >=3.9.7 ; extra == 'cloud'
+Provides-Extra: databricks
+Requires-Dist: databricks-sql-connector >=2.0.0 ; extra == 'databricks'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'databricks'
+Provides-Extra: dremio
+Requires-Dist: pyodbc >=4.0.30 ; extra == 'dremio'
+Requires-Dist: sqlalchemy-dremio ==1.2.1 ; extra == 'dremio'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'dremio'
+Provides-Extra: excel
+Requires-Dist: openpyxl >=3.0.7 ; extra == 'excel'
+Requires-Dist: xlrd <2.0.0,>=1.1.0 ; extra == 'excel'
+Provides-Extra: gcp
+Requires-Dist: gcsfs >=0.5.1 ; extra == 'gcp'
+Requires-Dist: google-cloud-bigquery >=3.3.6 ; extra == 'gcp'
+Requires-Dist: google-cloud-bigquery-storage >=2.20.0 ; extra == 'gcp'
+Requires-Dist: google-cloud-secret-manager >=1.0.0 ; extra == 'gcp'
+Requires-Dist: sqlalchemy-bigquery >=1.3.0 ; extra == 'gcp'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'gcp'
+Requires-Dist: google-cloud-storage >=1.28.0 ; (python_version < "3.11") and extra == 'gcp'
+Requires-Dist: google-cloud-storage >=2.10.0 ; (python_version >= "3.11") and extra == 'gcp'
+Provides-Extra: hive
+Requires-Dist: PyHive >=0.6.5 ; extra == 'hive'
+Requires-Dist: thrift >=0.16.0 ; extra == 'hive'
+Requires-Dist: thrift-sasl >=0.4.3 ; extra == 'hive'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'hive'
+Provides-Extra: mssql
+Requires-Dist: pyodbc >=4.0.30 ; extra == 'mssql'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'mssql'
+Provides-Extra: mysql
+Requires-Dist: PyMySQL <0.10,>=0.9.3 ; extra == 'mysql'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'mysql'
+Provides-Extra: pagerduty
+Requires-Dist: pypd ==1.1.0 ; extra == 'pagerduty'
+Provides-Extra: postgresql
+Requires-Dist: psycopg2-binary >=2.7.6 ; extra == 'postgresql'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'postgresql'
+Provides-Extra: redshift
+Requires-Dist: psycopg2-binary >=2.7.6 ; extra == 'redshift'
+Requires-Dist: sqlalchemy-redshift >=0.8.8 ; extra == 'redshift'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'redshift'
+Provides-Extra: s3
+Requires-Dist: boto3 >=1.17.106 ; extra == 's3'
+Provides-Extra: snowflake
+Requires-Dist: snowflake-sqlalchemy >=1.2.3 ; extra == 'snowflake'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'snowflake'
+Requires-Dist: snowflake-connector-python >=2.5.0 ; (python_version < "3.11") and extra == 'snowflake'
+Requires-Dist: snowflake-connector-python >2.9.0 ; (python_version >= "3.11") and extra == 'snowflake'
+Requires-Dist: pandas <2.2.0 ; (python_version >= "3.9") and extra == 'snowflake'
+Provides-Extra: spark
+Requires-Dist: pyspark >=2.3.2 ; extra == 'spark'
+Provides-Extra: teradata
+Requires-Dist: teradatasqlalchemy ==17.0.0.5 ; extra == 'teradata'
+Requires-Dist: sqlalchemy <2.0.0 ; extra == 'teradata'
+Provides-Extra: test
+Requires-Dist: boto3 >=1.17.106 ; extra == 'test'
+Requires-Dist: flaky >=3.7.0 ; extra == 'test'
+Requires-Dist: flask >=1.0.0 ; extra == 'test'
+Requires-Dist: freezegun >=0.3.15 ; extra == 'test'
+Requires-Dist: ipykernel <=6.17.1 ; extra == 'test'
+Requires-Dist: moto <3.0.0,>=2.0.0 ; extra == 'test'
+Requires-Dist: nbconvert >=5 ; extra == 'test'
+Requires-Dist: pact-python >=2.0.1 ; extra == 'test'
+Requires-Dist: pyfakefs >=4.5.1 ; extra == 'test'
+Requires-Dist: pytest >=6.2.0 ; extra == 'test'
+Requires-Dist: pytest-benchmark >=3.4.1 ; extra == 'test'
+Requires-Dist: pytest-cov >=2.8.1 ; extra == 'test'
+Requires-Dist: pytest-icdiff >=0.6 ; extra == 'test'
+Requires-Dist: pytest-mock >=3.8.2 ; extra == 'test'
+Requires-Dist: pytest-order >=0.9.5 ; extra == 'test'
+Requires-Dist: pytest-random-order >=1.0.4 ; extra == 'test'
+Requires-Dist: pytest-timeout >=2.1.0 ; extra == 'test'
+Requires-Dist: pytest-xdist >=3.3.1 ; extra == 'test'
+Requires-Dist: requirements-parser >=0.2.0 ; extra == 'test'
+Requires-Dist: responses >=0.23.1 ; extra == 'test'
+Requires-Dist: snapshottest ==0.6.0 ; extra == 'test'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'test'
+Requires-Dist: adr-tools-python ==1.0.3 ; extra == 'test'
+Requires-Dist: black[jupyter] ==23.10.1 ; extra == 'test'
+Requires-Dist: invoke >=2.0.0 ; extra == 'test'
+Requires-Dist: mypy ==1.7.1 ; extra == 'test'
+Requires-Dist: pre-commit >=2.21.0 ; extra == 'test'
+Requires-Dist: ruff ==0.1.11 ; extra == 'test'
+Requires-Dist: tomli >=2.0.1 ; extra == 'test'
+Requires-Dist: docstring-parser ==0.15 ; extra == 'test'
+Requires-Dist: feather-format >=0.4.1 ; extra == 'test'
+Requires-Dist: pyarrow ; extra == 'test'
+Provides-Extra: trino
+Requires-Dist: trino !=0.316.0,>=0.310.0 ; extra == 'trino'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'trino'
+Provides-Extra: vertica
+Requires-Dist: sqlalchemy-vertica-python >=0.5.10 ; extra == 'vertica'
+Requires-Dist: sqlalchemy >=1.4.0 ; extra == 'vertica'
+
+Always know what to expect from your data. (See https://github.com/great-expectations/great_expectations for full description).
+
+

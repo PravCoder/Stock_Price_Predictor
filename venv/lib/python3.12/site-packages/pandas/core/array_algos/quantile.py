@@ -102,7 +102,7 @@ def quantile_with_mask(
             interpolation=interpolation,
         )
 
-        result = np.asarray(result)
+        result = np.array(result, copy=False)
         result = result.T
 
     return result
@@ -201,9 +201,9 @@ def _nanpercentile(
         ]
         if values.dtype.kind == "f":
             # preserve itemsize
-            result = np.asarray(result, dtype=values.dtype).T
+            result = np.array(result, dtype=values.dtype, copy=False).T
         else:
-            result = np.asarray(result).T
+            result = np.array(result, copy=False).T
             if (
                 result.dtype != values.dtype
                 and not mask.all()

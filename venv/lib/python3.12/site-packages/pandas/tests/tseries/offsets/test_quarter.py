@@ -9,7 +9,6 @@ from datetime import datetime
 
 import pytest
 
-import pandas._testing as tm
 from pandas.tests.tseries.offsets.common import (
     assert_is_on_offset,
     assert_offset_equal,
@@ -54,12 +53,9 @@ class TestQuarterBegin:
         assert repr(QuarterBegin(startingMonth=1)) == expected
 
     def test_is_anchored(self):
-        msg = "QuarterBegin.is_anchored is deprecated "
-
-        with tm.assert_produces_warning(FutureWarning, match=msg):
-            assert QuarterBegin(startingMonth=1).is_anchored()
-            assert QuarterBegin().is_anchored()
-            assert not QuarterBegin(2, startingMonth=1).is_anchored()
+        assert QuarterBegin(startingMonth=1).is_anchored()
+        assert QuarterBegin().is_anchored()
+        assert not QuarterBegin(2, startingMonth=1).is_anchored()
 
     def test_offset_corner_case(self):
         # corner
@@ -165,12 +161,9 @@ class TestQuarterEnd:
         assert repr(QuarterEnd(startingMonth=1)) == expected
 
     def test_is_anchored(self):
-        msg = "QuarterEnd.is_anchored is deprecated "
-
-        with tm.assert_produces_warning(FutureWarning, match=msg):
-            assert QuarterEnd(startingMonth=1).is_anchored()
-            assert QuarterEnd().is_anchored()
-            assert not QuarterEnd(2, startingMonth=1).is_anchored()
+        assert QuarterEnd(startingMonth=1).is_anchored()
+        assert QuarterEnd().is_anchored()
+        assert not QuarterEnd(2, startingMonth=1).is_anchored()
 
     def test_offset_corner_case(self):
         # corner

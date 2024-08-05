@@ -17,7 +17,7 @@ class DummyArray(ExtensionArray):
     def __init__(self, data) -> None:
         self.data = data
 
-    def __array__(self, dtype=None, copy=None):
+    def __array__(self, dtype):
         return self.data
 
     @property
@@ -30,10 +30,8 @@ class DummyArray(ExtensionArray):
             if copy:
                 return type(self)(self.data)
             return self
-        elif not copy:
-            return np.asarray(self, dtype=dtype)
-        else:
-            return np.array(self, dtype=dtype, copy=copy)
+
+        return np.array(self, dtype=dtype, copy=copy)
 
 
 class TestExtensionArrayDtype:

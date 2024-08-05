@@ -2,8 +2,6 @@ import contextlib
 
 import pytest
 
-from pandas.compat import is_platform_windows
-
 from pandas import DataFrame
 import pandas._testing as tm
 
@@ -11,13 +9,7 @@ from pandas.io.excel import ExcelWriter
 
 xlsxwriter = pytest.importorskip("xlsxwriter")
 
-if is_platform_windows():
-    pytestmark = pytest.mark.single_cpu
-
-
-@pytest.fixture
-def ext():
-    return ".xlsx"
+pytestmark = pytest.mark.parametrize("ext", [".xlsx"])
 
 
 def test_column_format(ext):

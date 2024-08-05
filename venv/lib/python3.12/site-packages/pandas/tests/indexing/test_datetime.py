@@ -57,10 +57,7 @@ class TestDatetimeIndex:
         df = DataFrame({"a": date_range("2014-01-01", periods=10, tz="UTC")})
         result = df.iloc[5]
         expected = Series(
-            [Timestamp("2014-01-06 00:00:00+0000", tz="UTC")],
-            index=["a"],
-            name=5,
-            dtype="M8[ns, UTC]",
+            [Timestamp("2014-01-06 00:00:00+0000", tz="UTC")], index=["a"], name=5
         )
         tm.assert_series_equal(result, expected)
 
