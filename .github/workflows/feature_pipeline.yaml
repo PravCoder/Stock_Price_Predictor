@@ -38,4 +38,4 @@ jobs:
         HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
       run: |
         source venv/bin/activate
-        jupyter nbconvert --to notebook --execute notebooks/06_feature_pipeline.ipynb --output notebooks/06_feature_pipeline_output.ipynb
+        jupyter nbconvert --to notebook --execute notebooks/06_feature_pipeline.ipynb
