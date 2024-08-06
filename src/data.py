@@ -198,7 +198,7 @@ def get_cutoff_indicies(data, n_previous_days, step_size):
 
 # DATA SPLIT
 from sklearn.model_selection import train_test_split
-
+# tabular-price = features & targets
 def train_test_split_tabular(tabular_prices, target_column_name="target_close_price_next_day", test_size=0.2, random_state=42):
     # seperate features/targets
     X = tabular_prices.drop(columns=[target_column_name])
