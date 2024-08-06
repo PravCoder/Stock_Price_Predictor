@@ -46,6 +46,7 @@ def dowload_one_file_of_raw_data(symbol, start_date, end_date):
     
 
     path = f'../data/raw/prices_{start_date}-{end_date}.parquet'
+    df = validate_raw_data(df, start_date, end_date)
     df.to_parquet(path, index=True)
     return df  # return raw data
 
@@ -57,6 +58,7 @@ def validate_raw_data(prices, start, end):
     prices = prices[prices.datetime >= start_date]
     prices = prices[prices.datetime < end_date]
     prices
+    return prices
 
 
 # HANDLE MISSING DAYS IN TIME-SERIES DATA: INTERPOLATION
@@ -99,7 +101,7 @@ def add_missing_days(prices, start_date, end_date):
     prices = pd.concat([prices, missing_dates_df]).drop_duplicates(subset=['datetime']).sort_values(by='datetime').reset_index(drop=True)
     prices_interpolated = interpolate_backfill_frontfill(prices)
     
-    print("MISSING DATES")
+    # print("MISSING DATES")
     # missing_dates_df
     return prices, prices_interpolated
 

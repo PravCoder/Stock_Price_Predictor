@@ -1,0 +1,34 @@
+name: daily-stock-prices-feature-pipeline
+
+on:
+  schedule:
+    - cron: '0 * * * *'
+  workflow_dispatch:
+
+
+jobs:
+
+  feature_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python 3.9
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+    
+    - name: Install Poetry
+      uses: snok/install-poetry@v1
+    
+    - name: Install Dependencies
+      run: poetry install
+      if: steps.cache.outputs.cache-hit != 'true'
+
+    - name: execute python workflows from bash script
+      env:
+        HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+      run: poetry run jupyter nbconvert --to notebook --execute notebooks/06_feature_pipeline.ipynb
+
+
