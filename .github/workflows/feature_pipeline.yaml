@@ -2,12 +2,10 @@ name: daily-stock-prices-feature-pipeline
 
 on:
   schedule:
-    - cron: '0 * * * *'
+    - cron: '0 0 * * *'  # Runs at midnight UTC every day
   workflow_dispatch:
 
-
 jobs:
-
   feature_pipeline:
     runs-on: ubuntu-latest
 
@@ -18,17 +16,26 @@ jobs:
       uses: actions/setup-python@v4
       with:
         python-version: '3.9'
-    
-    - name: Install Poetry
-      uses: snok/install-poetry@v1
-    
-    - name: Install Dependencies
-      run: poetry install
-      if: steps.cache.outputs.cache-hit != 'true'
 
-    - name: execute python workflows from bash script
+    - name: Cache pip
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Dependencies
+      run: |
+        python -m venv venv
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Execute Jupyter Notebook
       env:
         HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
-      run: poetry run jupyter nbconvert --to notebook --execute notebooks/06_feature_pipeline.ipynb
-
-
+      run: |
+        source venv/bin/activate
+        jupyter nbconvert --to notebook --execute notebooks/06_feature_pipeline.ipynb --output notebooks/06_feature_pipeline_output.ipynb
