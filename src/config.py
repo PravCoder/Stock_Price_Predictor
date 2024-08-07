@@ -15,3 +15,6 @@ FEATURE_GROUP_VERSION =  3
 FEATURE_VIEW_NAME = "time_series_daily_feature_view"
 FEATURE_VIEW_VERSION = 1
 N_FEATURES = 12
+
+MODEL_NAME = "lightgbm_model_stock_prices"
+MODEL_VERSION = 2
