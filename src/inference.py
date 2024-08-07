@@ -1,7 +1,9 @@
+from dotenv import load_dotenv
+load_dotenv()
 import hopsworks
 import pandas as pd
 import numpy as np
-import src.config as config
+import config as config  # not doing src.config
 from datetime import datetime, timedelta
 
 
@@ -17,7 +19,7 @@ def get_feature_store():
     return project.get_feature_store()
 
 def get_model_predictions(model, features):
-    predictions = model.predict(features)
+    predictions = model.predict(features)  # call model-obj.predict()
 
     results = pd.DataFrame()
     results["predicted_prices"] = predictions.round(0)
@@ -42,12 +44,14 @@ def load_batch_of_features_from_store(): # 2024-08-05
         version=config.FEATURE_VIEW_VERSION
     )
 
-    # get specific batch of data betweens start-end date from feature-view
+    """# get specific batch of data betweens start-end date from feature-view
     ts_prices = feature_view.get_batch_data(
         start_time=(start_date_datetime - timedelta(days=1)),
         end_time=(end_date_datetime - timedelta(days=1))
+    )"""
+    ts_prices, _ = feature_view.training_data(
+        description="Time-series daily stock prices"
     )
-
     ts_prices.sort_values(by=["datetime"], inplace=True)
 
     # return features
@@ -72,3 +76,6 @@ def load_model_from_registry():
     lgb_model = joblib.load(model_path)
 
     return lgb_model
+
+def load_predictions_from_store():
+    pass
