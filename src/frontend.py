@@ -17,7 +17,8 @@ from inference import (
     # load_predictions_from_store,
     load_batch_of_features_from_store,
     load_model_from_registry,
-    get_model_predictions
+    get_model_predictions,
+    get_future_predictions
 )
 from data import (
     transform_ts_data_into_features_target
@@ -35,8 +36,10 @@ progress_bar = st.sidebar.progress(0)
 N_STEPS = 7
 
 with st.spinner(text="Fetching batch of inference data"):
-    # features-df = get most recent features stored by feature-pipeline from feature-store
+    # get historical 2 years back frmo current date
     ts_prices = load_batch_of_features_from_store()
+    # TBD: get future data from current date 
+
     st.sidebar.write('✅ Model predictions arrived') 
     progress_bar.progress(2/N_STEPS)
     # print(f"{ts_prices}")
@@ -51,7 +54,10 @@ with st.spinner(text="Computing Model predictions"):
     n_previous_days = 12
     step_size = 1
     features, targets = transform_ts_data_into_features_target(ts_prices, n_previous_days, step_size) # convert ts-data from feature-store into features/targets for training
+    # get historical prediction
     predictions = get_model_predictions(model, features)  # predictions
+
+    # get future predictions
     st.sidebar.write("✅ Model predictions arrived") 
     progress_bar.progress(4/N_STEPS)
     print(f"Model predictions {predictions}")
@@ -74,10 +80,13 @@ results_df = pd.DataFrame({
 })
 
 # Display the chart title
-st.subheader("Actual vs Predicted Stock Prices")
+st.subheader(f"Actual vs Predicted Stock Prices in last {num_days_to_display} days")
 
 # Plot the actual and predicted prices using plotly
 fig = px.line(results_df, x="Date", y=["Actual", "Predicted"], title="Actual vs Predicted Stock Prices")
 fig.update_yaxes(range=[min(close_prices) - 10, max(close_prices) + 10])  # Set the y-axis range
 
 st.plotly_chart(fig)
+
+num_days = 5
+get_future_predictions(num_days, ts_prices, model)

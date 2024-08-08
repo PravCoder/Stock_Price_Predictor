@@ -145,7 +145,7 @@ def add_new_features(prices_interpolated):
     return prices_interpolated
 
 
-# TIME-SERIES DATA TO FEATURES/TARGETS
+# TIME-SERIES DATA TO FEATURES/TARGETS: CHANGE
 def transform_ts_data_into_features_target(prices, n_previous_days, step_size):
     # Get indices for slicing
     indicies = get_cutoff_indicies(prices, n_previous_days, step_size)
