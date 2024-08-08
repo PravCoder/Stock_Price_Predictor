@@ -39,7 +39,7 @@ with st.spinner(text="Fetching batch of inference data"):
     # get historical 2 years back frmo current date
     ts_prices = load_batch_of_features_from_store()
     # TBD: get future data from current date 
-
+    # print(ts_prices["datetime"])
     st.sidebar.write('✅ Model predictions arrived') 
     progress_bar.progress(2/N_STEPS)
     # print(f"{ts_prices}")
@@ -54,39 +54,61 @@ with st.spinner(text="Computing Model predictions"):
     n_previous_days = 12
     step_size = 1
     features, targets = transform_ts_data_into_features_target(ts_prices, n_previous_days, step_size) # convert ts-data from feature-store into features/targets for training
+    
+    
     # get historical prediction
     predictions = get_model_predictions(model, features)  # predictions
-
     # get future predictions
     st.sidebar.write("✅ Model predictions arrived") 
     progress_bar.progress(4/N_STEPS)
-    print(f"Model predictions {predictions}")
+
     
 
 
-# Get the last 30 days of actual close prices and plot against predictions
-num_days_to_display = 30  # Change this value to zoom in/out
-close_prices = ts_prices["close_price"].values[-num_days_to_display:]  # Ensure the lengths match
+# PLOT HISTORICAL DATA
+predicted_prices = predictions["predicted_prices"].values  # Get all predicted prices
+dates = ts_prices["datetime"][0:724]  # Get all dates
 
-# Ensure the lengths match for the last num_days_to_display days
-predicted_prices = predictions["predicted_prices"][-num_days_to_display:]
-dates = ts_prices["datetime"].values[-num_days_to_display:]
+print(f"Target prices: {len(list(targets))}")
+print(f"Predicted prices: {len(list(predicted_prices))}")
 
-# dataframe for predictions
+# Ensure that lengths match
+assert len(targets) == len(predicted_prices) == len(dates)
+
+# Create a DataFrame for results
 results_df = pd.DataFrame({
     "Date": dates,
-    "Actual": close_prices,
+    "Actual": targets,
     "Predicted": predicted_prices
 })
 
 # Display the chart title
-st.subheader(f"Actual vs Predicted Stock Prices in last {num_days_to_display} days")
+st.subheader("Historical Predictions Actual vs Predicted Stock Prices for All Days")
 
 # Plot the actual and predicted prices using plotly
 fig = px.line(results_df, x="Date", y=["Actual", "Predicted"], title="Actual vs Predicted Stock Prices")
-fig.update_yaxes(range=[min(close_prices) - 10, max(close_prices) + 10])  # Set the y-axis range
+fig.update_yaxes(range=[min(targets) - 10, max(targets) + 10])  # Set the y-axis range
 
 st.plotly_chart(fig)
+print('TS-PRICES')
+print(ts_prices)
 
-# num_days = 5
-# get_future_predictions(num_days, ts_prices, model)
+# PLOT FUTURE DATA
+num_days = 10
+future_results = get_future_predictions(num_days, ts_prices, model)
+future_results['datetime'] = pd.to_datetime(future_results['datetime'])
+
+fig = px.line(
+    future_results, 
+    x='datetime', 
+    y='future_predicted_prices', 
+    title=f'Future Predicted Stock Prices in next {num_days} days'
+)
+
+# Set the y-axis range based on future predicted prices
+fig.update_yaxes(range=[min(future_results['future_predicted_prices']) - 10, max(future_results['future_predicted_prices']) + 10])
+
+# Display the plot in Streamlit
+st.plotly_chart(fig)
+
+

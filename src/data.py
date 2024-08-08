@@ -116,12 +116,13 @@ def transform_raw_data_into_ts_data(prices, start_date, end_date):
 
 def add_new_features(prices_interpolated):
     # Simple moving average: average of prices over a specific period.
-    prices_interpolated['SMA_5'] = prices_interpolated['close_price'].rolling(window=5).mean()
-    prices_interpolated['SMA_20'] = prices_interpolated['close_price'].rolling(window=20).mean()
+    # CHANGED ALL TO LOWERCASE MAKE SURE NO ERROR IN FEATURE-PIPELINE
+    prices_interpolated['sma_5'] = prices_interpolated['close_price'].rolling(window=5).mean()
+    prices_interpolated['sma_20'] = prices_interpolated['close_price'].rolling(window=20).mean()
 
     # Exponential moving average: gives more weight to recent prices in an attempt to make them more responsive to new information
-    prices_interpolated['EMA_5'] = prices_interpolated['close_price'].ewm(span=5, adjust=False).mean()
-    prices_interpolated['EMA_20'] = prices_interpolated['close_price'].ewm(span=20, adjust=False).mean()
+    prices_interpolated['ema_5'] = prices_interpolated['close_price'].ewm(span=5, adjust=False).mean()
+    prices_interpolated['ema_20'] = prices_interpolated['close_price'].ewm(span=20, adjust=False).mean()
 
     # Volatility: standard deviation over a window to measure price fluctuation
     prices_interpolated['vol_5'] = prices_interpolated['close_price'].rolling(window=5).std()

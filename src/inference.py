@@ -8,6 +8,7 @@ from datetime import datetime, timedelta
 
 from data import (
     add_new_features,
+    interpolate_backfill_frontfill,
     transform_ts_data_into_features_target
 )
 
@@ -94,13 +95,27 @@ def load_predictions_from_store():
 
 
 
+# FUTURE PREDICTIONS:
 def get_previous_rows(prices, cur_date, n_previous=12):
     # Find the index of cur_date
     cur_index = prices[prices["datetime"] == cur_date].index[0]
     
     # Get the previous n_previous rows
-    previous_rows = prices.iloc[cur_index - n_previous:cur_index]
+    previous_rows = prices.iloc[cur_index - n_previous:cur_index+1]  # TBD***: ADDING ONE HERE AS A TEMPORARY FIX TO GET 13-SEQUENCE LENGTH EVEN THOUGH ITS SUPPOSED TO BE 12
     return previous_rows
+
+def transform_single_example_into_features(example_prices): # given dataframe of days which is perceived as a single sequence transform that into features/targets
+    features = []
+    cur_seq_days_matrix = []
+    for _, day_row in example_prices.iterrows():  # iterate through every day in example-sequence
+        values = list(day_row.drop(labels="datetime").values)  # get the values for cur-day and add it to the 2d-matrix where each row represents data for that day
+        cur_seq_days_matrix.append(values)
+
+    features.append(cur_seq_days_matrix)  # add the only sequence-matrix to features
+
+    features = np.array(features, dtype=np.float32)
+    return features  # there is no targets because its only used for future data
+
 def get_future_predictions(num_days, prices, model):  # ts-data
     prices["datetime"] = pd.to_datetime(prices["datetime"]).dt.tz_localize(None)
 
@@ -121,46 +136,54 @@ def get_future_predictions(num_days, prices, model):  # ts-data
             'vw_avr_price': np.nan,
             'num_transactions': np.nan,
 
-            "SMA_5": np.nan,
-            "SMA_20": np.nan,
-            "EMA_5": np.nan,
-            "EMA_20": np.nan,
+            "sma_5": np.nan,
+            "sma_20": np.nan,
+            "ema_5": np.nan,
+            "ema_20": np.nan,
             "vol_5": np.nan,
             "daily_return": np.nan,
             "price_diff": np.nan,
             "volume_sma_5": np.nan,
             "volume_change": np.nan
         })
+    prices.columns = prices.columns.str.lower() # chagnge all col names to lowercase
+    future_dates_df.columns = future_dates_df.columns.str.lower()
     # future_dates
     prices = pd.concat([prices, future_dates_df]).drop_duplicates(subset=['datetime']).sort_values(by='datetime').reset_index(drop=True)
 
     n_previous_days = 12
     step_size = 1
 
+    predictions = []
+    # iterate through every date in future-date
     for cur_date in future_date_range:
-        cur_date_row = pd.DataFrame(prices[prices["datetime"] == cur_date])["datetime"]
-        previous_rows = get_previous_rows(prices, cur_date, n_previous_days)
+        cur_date_row = pd.DataFrame(prices[prices["datetime"] == cur_date])  # get the future-date row in prices-df
+        previous_rows = get_previous_rows(prices, cur_date, n_previous_days)  # get the previous N-rows which are features in prices-df to cur-date-row
+        
+        # print(f"\nCur date: {cur_date}")
+        # print(prices)
+        
+        features = transform_single_example_into_features(previous_rows)  # this features only contains one sequence
+        # print(f"\nFeatures: {features.shape}")
 
+        # from the features get its only example-sequence and reshape to be fed
+        single_example = features[0].reshape(1, -1) 
+        preds = model.predict(single_example)  # compute predictions with single-example-sequence
+        predictions.append(preds.flatten())   # flatten preds which is just [175.3] beacause only one prediction 1 output node
+        # print(f"Preds: {preds}")
+        # print("----------------------------------------")
 
-        features = transform_single_example_into_features(previous_rows) 
-        preds = model.predict(features)
-        print(f"Preds: {preds}")
+        # for cur-future-date-row set close-price-col is what we predicted because its in the future
+        cur_date_row["close_price"] = preds.flatten()
+        # add cur-date-row-future that we predicted to the prices-df
+        prices = pd.concat([prices, cur_date_row]).drop_duplicates(subset=['datetime']).sort_values(by='datetime').reset_index(drop=True)
+        # and compute that days features and interpolate missing features
+        prices = add_new_features(prices)
+        prices = interpolate_backfill_frontfill(prices)
 
-def transform_single_example_into_features(example):
-    print(example)
-    features = []
-    # convert feature values to numerical only
-    feature_values = example.apply(pd.to_numeric, errors='coerce')
-    # add the days-rows of cur indx-pair to features which is an example
-    features.append(feature_values.values)
-
-    features = np.array(features, dtype=np.float32)
-    # flatten into 2D since 3-dimensional cannot we fed into model 
-    # features = [d1f1, d1f2, d1f3, d2f1, d2f2, d2f3]
-    n_previous_days = features.shape[1]
-    n_features = features.shape[2]
-    features = features.reshape(features.shape[0], n_previous_days * n_features)
-    return features
+    results = pd.DataFrame(predictions, columns=["future_predicted_prices"])
+    results["datetime"] = future_date_range  # return df with 2-cols price and date of future dates.
+    return results
 
 # get future feature data:
 # - current date to 30 days after
