@@ -1,0 +1,15 @@
+clang/__init__.py,sha256=lh2K1BnceqENjXt15fzWJMxoFAOlXOma0Urk_kp750k,595
+clang/__pycache__/__init__.cpython-312.pyc,,
+clang/__pycache__/cindex.cpython-312.pyc,,
+clang/__pycache__/enumerations.cpython-312.pyc,,
+clang/cindex.py,sha256=pm-dJbMFiwQvzW0UUmir3jeIbm7YZmymOutuo8QCcVY,132971
+clang/enumerations.py,sha256=2oGXkhtjySOwmpkFU9hnjhmyuWxnUPExhqoONFpQXBI,1108
+clang/native/__init__.py,sha256=5FQ0s_2rPa2Vpj_dOhp6usXXAHPT9X-MBVVZLP2Uoqo,23
+clang/native/__pycache__/__init__.cpython-312.pyc,,
+clang/native/libclang.dylib,sha256=WO0-k319h_3xOxd-ObbXsmCJ_hRgwNHpWHB2YSd7ZFQ,74992480
+libclang-18.1.1.dist-info/INSTALLER,sha256=zuuue4knoyJ-UwPPXg8fezS7VCrXJQrAP7zeNuwvFQg,4
+libclang-18.1.1.dist-info/LICENSE.TXT,sha256=682bv3g6c9BcU7pNWGuNWBPc3zu-xQJlhgzMiF5gb0c,15140
+libclang-18.1.1.dist-info/METADATA,sha256=7AoeWMsk2SoIBIyBejeBaYvVkr-xbp2nCGCrJj8f3Hs,5183
+libclang-18.1.1.dist-info/RECORD,,
+libclang-18.1.1.dist-info/WHEEL,sha256=R33vR3sQawVF2NXe158hqVBLqChO_r3u5kdKZFLRWX0,138
+libclang-18.1.1.dist-info/top_level.txt,sha256=VCqnbTg_nMMxDrCrGkh2eHoKHoKz9p-DeBjWjSGjJ4c,6

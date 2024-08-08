@@ -145,41 +145,38 @@ def add_new_features(prices_interpolated):
     return prices_interpolated
 
 
-# TIME-SERIES DATA TO FEATURES/TARGETS: CHANGE
-def transform_ts_data_into_features_target(prices, n_previous_days, step_size):
-    # Get indices for slicing
-    indicies = get_cutoff_indicies(prices, n_previous_days, step_size)
+# TIME-SERIES DATA TO FEATURES/TARGETS: DONE
+def transform_ts_data_into_features_target(ts_prices, n_previous_days, step_size):
+    indicies = get_cutoff_indicies(ts_prices, n_previous_days, step_size)
+    indicies = indicies[:len(indicies)-1]  # exclude last pair
+    num_seqs = len(indicies)
+    print(f"Number of sequences/examples: {num_seqs}")
 
-    # each element is an example, each example contains the previous-n-days, each day contains its features values
-    features = []
+    features = []  
     targets = []
 
-    # iterate every indicies pair, number of indicies is number of examples
-    for start_idx, end_idx in indicies:
-        # extract feature values for previous days (d1, d2, ..., dn)
-        # prices extract days-rows from start-indx of example to end-indx not inclusive because its the target, this is an example
-        feature_values = prices.iloc[start_idx:end_idx]
-        
-        # convert feature values to numerical only
-        feature_values = feature_values.apply(pd.to_numeric, errors='coerce')
-        
-        # add the days-rows of cur indx-pair to features which is an example
-        features.append(feature_values.values)
-        
-        # extract target value for the next day which is close-price, the end-index of window
-        target_value = prices.iloc[end_idx]['close_price']
-        targets.append(target_value)  # add target value of example to targets
+    for pair in indicies:
+        start_indx = pair[0]  # start-index of day-row to end-index of day-row, all days in between this range is a sequence/example
+        end_indx = pair[1]  # target indx of row
 
-    # convert to numpy arrays
+        sequence_df = ts_prices.iloc[start_indx: end_indx]  # get day-rows from start-indx to just before end-indx, each element is a day in current-sequence-day-example
+
+        cur_seq_days_matrix = []  # each row is the values of features for each day in cur-sequence-example
+        for _, day_row in sequence_df.iterrows():
+            
+            values = list(day_row.drop(labels="datetime").values)
+            cur_seq_days_matrix.append(values)
+
+        features.append(cur_seq_days_matrix)
+        target_value = ts_prices.iloc[end_indx]["close_price"]   # target row is end-indx close-price
+        targets.append(target_value)
+
+        if pair == indicies[0]: # confirm last-val of seq is not same as the target next value
+            print(f"Last val: {sequence_df.iloc[-1]["close_price"]}")
+            print(f"Target val: {target_value}")
+
     features = np.array(features, dtype=np.float32)
     targets = np.array(targets, dtype=np.float32)
-
-    # flatten into 2D since 3-dimensional cannot we fed into model 
-    # features = [d1f1, d1f2, d1f3, d2f1, d2f2, d2f3]
-    n_previous_days = features.shape[1]
-    n_features = features.shape[2]
-    features = features.reshape(features.shape[0], n_previous_days * n_features)
-
     return features, targets
 
 def get_cutoff_indicies(data, n_previous_days, step_size):
