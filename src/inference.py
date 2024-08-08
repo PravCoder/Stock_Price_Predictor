@@ -23,7 +23,14 @@ def get_feature_store():
     return project.get_feature_store()
 
 def get_model_predictions(model, features):
-    predictions = model.predict(features)  # call model-obj.predict()
+    print("FEATURES")
+    print(features)
+    X  = features
+
+    predictions = []
+    for input_seq in X:
+        pred = model.predict(input_seq) 
+    predictions = model.predict(pred)  
 
     results = pd.DataFrame()
     results["predicted_prices"] = predictions.round(0)
@@ -75,7 +82,7 @@ def load_model_from_registry():
 
     model_dir = model.download()
     
-    model_path = f"{model_dir}/lgb_model.pkl"
+    model_path = f"{model_dir}/lgb_model3.pkl"
 
     lgb_model = joblib.load(model_path)
 

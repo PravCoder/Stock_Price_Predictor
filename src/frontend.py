@@ -88,5 +88,5 @@ fig.update_yaxes(range=[min(close_prices) - 10, max(close_prices) + 10])  # Set 
 
 st.plotly_chart(fig)
 
-num_days = 5
-get_future_predictions(num_days, ts_prices, model)
+# num_days = 5
+# get_future_predictions(num_days, ts_prices, model)
