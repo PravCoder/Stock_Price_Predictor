@@ -24,16 +24,16 @@ def get_feature_store():
 
 def get_model_predictions(model, features):
     print("FEATURES")
-    print(features)
+    print(features.shape)
     X  = features
-
+    # single_example = X[0].reshape(1, -1)
+    # print(model.predict(single_example))
     predictions = []
     for input_seq in X:
-        pred = model.predict(input_seq) 
-    predictions = model.predict(pred)  
+        pred = model.predict(input_seq.reshape(1, -1)) 
+        predictions.append(pred.flatten())
 
-    results = pd.DataFrame()
-    results["predicted_prices"] = predictions.round(0)
+    results = pd.DataFrame(predictions, columns=["predicted_prices"])
     # print(results)
     return results
 
