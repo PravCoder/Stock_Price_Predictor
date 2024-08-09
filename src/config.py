@@ -19,3 +19,4 @@ N_FEATURES = 12
 
 MODEL_NAME = "lightgbm_model_stock_prices3"
 MODEL_VERSION = 1
+

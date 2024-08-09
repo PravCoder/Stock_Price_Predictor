@@ -1,9 +1,10 @@
+# Also considered inference pipeline
 from dotenv import load_dotenv
 load_dotenv()
 import hopsworks
 import pandas as pd
 import numpy as np
-import config as config  # not doing src.config
+import config as config # not doing src.config
 from datetime import datetime, timedelta
 
 from data import (
@@ -23,7 +24,7 @@ def get_feature_store():
     project = get_hopsworks_project()  # return pointer to feature store
     return project.get_feature_store()
 
-def get_model_predictions(model, features):
+def get_model_predictions(model, features, ts_prices):  # gets predictions on historical data
     print("FEATURES")
     print(features.shape)
     X  = features
@@ -35,6 +36,7 @@ def get_model_predictions(model, features):
         predictions.append(pred.flatten())
 
     results = pd.DataFrame(predictions, columns=["predicted_prices"])
+    # results["datetime"] = ts_prices["datetime"] # adding datetime column to each predicted-price so we know for what day that prediction is for
     # print(results)
     return results
 
@@ -89,8 +91,6 @@ def load_model_from_registry():
 
     return lgb_model
 
-def load_predictions_from_store():
-    pass
 
 
 
@@ -196,7 +196,29 @@ def get_future_predictions(num_days, prices, model):  # ts-data
 
 
 def load_historical_predictions_from_store():
-    pass
+    feature_store = get_feature_store()
+
+    # Retrieve the feature group
+    feature_group = feature_store.get_feature_group(
+        name="model_prediction_historical",
+        version=1
+    )
+
+    # Read the data from the feature group
+    # historical_predictions_df = feature_group.read().sort_values(by='datetime').reset_index(drop=True)
+    historical_predictions_df = feature_group.read()
+    return historical_predictions_df
 
 def load_future_predictions_from_store():
-    pass
+    feature_store = get_feature_store()
+
+    # Retrieve the feature group
+    feature_group = feature_store.get_feature_group(
+        name="model_prediction_future",
+        version=1
+    )
+
+    # Read the data from the feature group
+    future_predictions_df = feature_group.read().sort_values(by='datetime').reset_index(drop=True)
+    future_predictions_df  # make sure to sort
+    return future_predictions_df

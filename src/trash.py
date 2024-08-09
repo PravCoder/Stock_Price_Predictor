@@ -1,3 +1,5 @@
+
+"""
 import requests
 import numpy as np
 import pandas as pd
@@ -18,9 +20,7 @@ from inference import (
     load_batch_of_features_from_store,
     load_model_from_registry,
     get_model_predictions,
-    get_future_predictions,
-    load_historical_predictions_from_store,
-    load_future_predictions_from_store
+    get_future_predictions
 )
 from data import (
     transform_ts_data_into_features_target
@@ -51,32 +51,27 @@ with st.spinner(text="Loading ML model from model registry"):
     st.sidebar.write("✅ ML model was loaded from the registry") 
     progress_bar.progress(3/N_STEPS)
 
-with st.spinner(text="Fetching/Computing Model predictions"):
+with st.spinner(text="Computing Model predictions"):
     n_previous_days = 12
-    step_size = 1 # YO KEEP THIS FEATURES/TARGETS BECAUSE WE NEED TARGETS TO PLOT
+    step_size = 1
     features, targets = transform_ts_data_into_features_target(ts_prices, n_previous_days, step_size) # convert ts-data from feature-store into features/targets for training
     
     # get historical prediction
-    historical_predictions = load_historical_predictions_from_store()
-    print("HISTORICAL PREDICTIONS:")
-    print(historical_predictions)
+    predictions = get_model_predictions(model, features, ts_prices)  # predictions
+    print(f"Predictions: {predictions}")
     # get future predictions
-    fututre_predictions = load_future_predictions_from_store()
-    print("\nFUTURE PREDICTIONS:")
-    print(fututre_predictions)
+    num_days = 10
+    future_results = get_future_predictions(num_days, ts_prices, model)
+    print(f"Future Predictions: {predictions}")
 
     st.sidebar.write("✅ Model predictions arrived") 
     progress_bar.progress(4/N_STEPS)
 
     
-print("\nEXAMPLE")
-print('actual')
-print(targets[0:5])
-print('preds')
-print(historical_predictions[0:5])
-# PLOT HISTORICAL DATA
 
-predicted_prices = historical_predictions["predicted_prices"].values  # Get all predicted prices
+
+# PLOT HISTORICAL DATA
+predicted_prices = predictions["predicted_prices"].values  # Get all predicted prices
 dates = ts_prices["datetime"][0:len(list(targets))]  # Get all dates
 
 print(f"Target prices: {len(list(targets))}")
@@ -88,7 +83,7 @@ assert len(targets) == len(predicted_prices) == len(dates)
 # Create a DataFrame for results
 results_df = pd.DataFrame({
     "Date": dates,
-    "Actual": targets ,
+    "Actual": targets,
     "Predicted": predicted_prices
 })
 
@@ -100,22 +95,25 @@ fig = px.line(results_df, x="Date", y=["Actual", "Predicted"], title="Actual vs 
 fig.update_yaxes(range=[min(targets) - 10, max(targets) + 10])  # Set the y-axis range
 
 st.plotly_chart(fig)
-# print('TS-PRICES')
-# print(ts_prices)
+print("\nEXAMPLE")
+print('actual')
+print(targets[0:5])
+print('preds')
+print(predicted_prices[0:5])
 
 # PLOT FUTURE DATA
-num_days = 10
-fututre_predictions['datetime'] = pd.to_datetime(fututre_predictions['datetime'])
+future_results['datetime'] = pd.to_datetime(future_results['datetime'])
 
 fig = px.line(
-    fututre_predictions, 
+    future_results, 
     x='datetime', 
     y='future_predicted_prices', 
     title=f'Future Predicted Stock Prices in next {num_days} days'
 )
 
 # Set the y-axis range based on future predicted prices
-fig.update_yaxes(range=[min(fututre_predictions['future_predicted_prices']) - 10, max(fututre_predictions['future_predicted_prices']) + 10])
+fig.update_yaxes(range=[min(future_results['future_predicted_prices']) - 10, max(future_results['future_predicted_prices']) + 10])
 
 # Display the plot in Streamlit
 st.plotly_chart(fig)
+"""
