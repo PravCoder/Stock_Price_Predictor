@@ -1,13 +1,16 @@
 name: daily-stock-prices-training-pipeline
 
-on:
-  workflow_run:
-    workflows: ["daily-stock-prices-feature-pipeline"]
-    types:
-      - completed
+# on:
+#   workflow_run:
+#     workflows: ["daily-stock-prices-feature-pipeline"]
+#     types:
+#       - completed
   
-  workflow_dispatch:  # This allows for manual triggering
-
+#   workflow_dispatch:  # This allows for manual triggering
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs at midnight UTC every day
+  workflow_dispatch:
 jobs:
   feature_pipeline:
     runs-on: ubuntu-latest
