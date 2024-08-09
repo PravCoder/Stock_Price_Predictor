@@ -192,3 +192,11 @@ def get_future_predictions(num_days, prices, model):  # ts-data
 # get model predictions of future data
 # input into the model for day_x in the previous N days and features. 
 # so predict day one and add it to the data, predict dat two adn add it to the data. 
+
+
+
+def load_historical_predictions_from_store():
+    pass
+
+def load_future_predictions_from_store():
+    pass

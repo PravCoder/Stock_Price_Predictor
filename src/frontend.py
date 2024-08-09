@@ -44,7 +44,6 @@ with st.spinner(text="Fetching batch of inference data"):
     progress_bar.progress(2/N_STEPS)
     # print(f"{ts_prices}")
 
-
 with st.spinner(text="Loading ML model from model registry"):
     model = load_model_from_registry()  
     st.sidebar.write("✅ ML model was loaded from the registry") 
@@ -55,10 +54,14 @@ with st.spinner(text="Computing Model predictions"):
     step_size = 1
     features, targets = transform_ts_data_into_features_target(ts_prices, n_previous_days, step_size) # convert ts-data from feature-store into features/targets for training
     
-    
     # get historical prediction
     predictions = get_model_predictions(model, features)  # predictions
+
     # get future predictions
+    num_days = 10
+    future_results = get_future_predictions(num_days, ts_prices, model)
+
+
     st.sidebar.write("✅ Model predictions arrived") 
     progress_bar.progress(4/N_STEPS)
 
@@ -94,8 +97,6 @@ print('TS-PRICES')
 print(ts_prices)
 
 # PLOT FUTURE DATA
-num_days = 10
-future_results = get_future_predictions(num_days, ts_prices, model)
 future_results['datetime'] = pd.to_datetime(future_results['datetime'])
 
 fig = px.line(
