@@ -9,7 +9,7 @@ on:
   workflow_dispatch:  # This allows for manual triggering
 
 jobs:
-  training_pipeline:
+  inference_pipeline:
     runs-on: ubuntu-latest
 
     steps:
