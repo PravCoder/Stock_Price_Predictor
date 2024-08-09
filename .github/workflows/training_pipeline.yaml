@@ -5,6 +5,8 @@ on:
     workflows: ["daily-stock-prices-feature-pipeline"]
     types:
       - completed
+  
+  workflow_dispatch:  # This allows for manual triggering
 
 jobs:
   feature_pipeline:
