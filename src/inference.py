@@ -5,10 +5,10 @@ load_dotenv()
 import hopsworks
 import pandas as pd
 import numpy as np
-import src.config as config # not doing src.config
+import config as config # not doing src.config
 from datetime import datetime, timedelta
 
-from src.data import (
+from data import (
     add_new_features,
     interpolate_backfill_frontfill,
     transform_ts_data_into_features_target
