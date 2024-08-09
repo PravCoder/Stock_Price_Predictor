@@ -6,7 +6,7 @@ Video
 
 ## High-Level Overview
 ### 3-Pipeline Design 
-![Alt text](Stock_Price_Prediction/images/pipeline.png)
+![Alt text](images/pipeline.png)
 
 #### Feature Pipeline
 TBD
