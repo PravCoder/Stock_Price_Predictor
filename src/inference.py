@@ -1,3 +1,4 @@
+
 # Also considered inference pipeline
 from dotenv import load_dotenv
 load_dotenv()
@@ -222,3 +223,6 @@ def load_future_predictions_from_store():
     future_predictions_df = feature_group.read().sort_values(by='datetime').reset_index(drop=True)
     future_predictions_df  # make sure to sort
     return future_predictions_df
+
+if __name__ == "__main__":
+    pass
