@@ -67,7 +67,7 @@ with st.spinner(text="Computing Model predictions"):
 
 # PLOT HISTORICAL DATA
 predicted_prices = predictions["predicted_prices"].values  # Get all predicted prices
-dates = ts_prices["datetime"][0:724]  # Get all dates
+dates = ts_prices["datetime"][0:len(list(targets))]  # Get all dates
 
 print(f"Target prices: {len(list(targets))}")
 print(f"Predicted prices: {len(list(predicted_prices))}")
