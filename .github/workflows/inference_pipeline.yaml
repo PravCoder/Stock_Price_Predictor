@@ -1,0 +1,45 @@
+name: daily-stock-prices-inference-pipeline
+
+on:
+  workflow_run:  # runs after feature-pipeline is finished
+    workflows: ["daily-stock-prices-training-pipeline"]
+    types:
+      - completed
+  
+  workflow_dispatch:  # This allows for manual triggering
+
+jobs:
+  training_pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Setup Python 3.12
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.12'
+
+    - name: Cache pip
+      id: cache
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+
+    - name: Install Dependencies
+      run: |
+        source venv/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install ipykernel
+        python -m ipykernel install --user --name=venv --display-name "Python (venv)"
+
+    - name: Execute Jupyter Notebook
+      env:
+        HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+      run: |
+        source venv/bin/activate
+        jupyter nbconvert --to notebook --execute notebooks/08_inference_pipeline.ipynb
