@@ -1,7 +1,8 @@
 # Stock Price Prediction Service
 
 ## Demo
-Video
+![Alt text](images/demo.gif)
+
 ##### Credits: Pau Labarta Bajo
 
 ## High-Level Overview
