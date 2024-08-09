@@ -1,0 +1,2 @@
+[console_scripts]
+avro = avro.__main__:main

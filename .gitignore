@@ -1,4 +1,3 @@
-venv/
 *.dylib
 *.so
 .env

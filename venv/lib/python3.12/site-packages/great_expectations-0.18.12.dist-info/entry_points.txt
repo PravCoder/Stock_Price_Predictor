@@ -1,0 +1,3 @@
+[console_scripts]
+great_expectations = great_expectations.cli:main
+

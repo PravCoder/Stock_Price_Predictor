@@ -1,0 +1,109 @@
+Metadata-Version: 2.1
+Name: pyhumps
+Version: 1.6.1
+Summary: 🐫  Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python. Inspired by Humps for Node
+Home-page: https://github.com/nficano/humps
+Author: Nick Ficano
+Author-email: nficano@gmail.com
+License: MIT
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: Implementation :: CPython
+Classifier: Programming Language :: Python :: Implementation :: PyPy
+Description-Content-Type: text/markdown
+
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/nficano/humps/master/artwork/humps.png" alt="Humps logo" width="245" height="118">
+  <div align="center">
+    <a href="https://travis-ci.org/nficano/humps"><img src="https://travis-ci.org/nficano/humps.svg?branch=master" /></a>
+    <a href="http://humps.readthedocs.io/en/latest/?badge=latest"><img src="https://readthedocs.org/projects/humps/badge/?version=latest" /></a>
+    <a href="https://coveralls.io/github/nficano/humps?branch=master"><img src="https://coveralls.io/repos/github/nficano/humps/badge.svg?branch=master#cachebus" /></a>
+    <a href="https://pypi.org/project/pyhumps/"><img src="https://img.shields.io/pypi/v/pyhumps.svg#cachebust" alt="pypi"></a>
+    <a href="https://pypi.org/project/pyhumps/"><img src="https://img.shields.io/pypi/dm/pyhumps.svg" alt="pypi"></a>
+    <a href="https://pypi.python.org/pypi/pyhumps/"><img src="https://img.shields.io/pypi/pyversions/pyhumps.svg" /></a>
+  </div>
+</p>
+
+
+Convert strings (and dictionary keys) between snake case, camel case and pascal case in Python. Inspired by [Humps](https://github.com/domchristie/humps) for Node.
+
+## Installation
+
+To install humps, simply use pipenv (or pip, of course):
+
+```bash
+$ pipenv install pyhumps
+```
+
+## Usage
+
+### Converting strings
+
+```python
+import humps
+
+humps.camelize('jack_in_the_box')  # jackInTheBox
+humps.decamelize('rubyTuesdays')  # ruby_tuesdays
+humps.pascalize('red_robin')  # RedRobin
+```
+
+### Converting dictionary keys
+
+```python
+import humps
+
+array = [{'attrOne': 'foo'}, {'attrOne': 'bar'}]
+humps.decamelize(array) # [{'attr_one': 'foo'}, {'attr_one': 'bar'}]
+
+array = [{'attr_one': 'foo'}, {'attr_one': 'bar'}]
+humps.camelize(array)  # [{'attrOne': 'foo'}, {'attrOne': 'bar'}]
+
+array = [{'attr_one': 'foo'}, {'attr_one': 'bar'}]
+humps.pascalize(array)  # [{'AttrOne': 'foo'}, {'AttrOne': 'bar'}]
+```
+
+### Checking character casing
+```python
+import humps
+
+humps.is_camelcase('illWearYourGranddadsClothes')  # True
+humps.is_pascalcase('ILookIncredible')  # True
+humps.is_snakecase('im_in_this_big_ass_coat')  # True
+humps.is_camelcase('from_that_thrift_shop')  # False
+humps.is_snakecase('downTheRoad')  # False
+
+# what about abbrevations, acronyms, and initialisms? No problem!
+humps.decamelize('APIResponse')  # api_response
+```
+
+<hr>
+
+## Humps Cookbook
+
+#### Pythonic Boto3 API Wrapper
+
+```python
+# aws.py
+import humps
+import boto3
+
+def api(service, decamelize=True, *args, **kwargs):
+    service, func = service.split(':')
+    client = boto3.client(service)
+    kwargs = humps.pascalize(kwargs)
+    response = getattr(client, func)(*args, **kwargs)
+    return (depascalize(response) if decamelize else response)
+
+# usage
+api('s3:download_file', bucket='bucket', key='hello.png', filename='hello.png')
+```
+
+
