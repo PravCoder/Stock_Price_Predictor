@@ -77,10 +77,12 @@ print(historical_predictions[0:5])
 # PLOT HISTORICAL DATA
 
 predicted_prices = historical_predictions["predicted_prices"].values  # Get all predicted prices
-dates = ts_prices["datetime"][0:len(list(targets))]  # Get all dates
+dates = ts_prices["datetime"][0:len(list(predicted_prices))]  # Get all dates
+targets = targets[0:len(list(predicted_prices))]  # make sure all 3 same length of the predicted prices beacuse we only want to plot what we have predictions for
 
 print(f"Target prices: {len(list(targets))}")
 print(f"Predicted prices: {len(list(predicted_prices))}")
+print(f"Dates: {len(list(dates))}")
 
 # Ensure that lengths match
 assert len(targets) == len(predicted_prices) == len(dates)
