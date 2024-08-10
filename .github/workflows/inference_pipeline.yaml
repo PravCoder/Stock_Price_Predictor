@@ -31,11 +31,15 @@ jobs:
 
     - name: Install Dependencies
       run: |
+        python -m venv venv
         source venv/bin/activate
         pip install --upgrade pip
         pip install -r requirements.txt
         pip install ipykernel
         python -m ipykernel install --user --name=venv --display-name "Python (venv)"
+
+    - name: Set PYTHONPATH Environment Variable
+      run: echo "PYTHONPATH=$(pwd)/src" >> $GITHUB_ENV
 
     - name: Execute Jupyter Notebook
       env:
