@@ -123,11 +123,12 @@ def get_future_predictions(num_days, prices, model):  # ts-data
     # Get the last date in the DataFrame
     last_date_in_df = prices["datetime"].max()
     
-    # Generate future dates
+    # Generate future dates from last date in dataframe to 10 days after
     future_dates = [(last_date_in_df + timedelta(days=i)).strftime('%Y-%m-%d') for i in range(1, num_days + 1)]
+    print(f"FUTURE DATES: {future_dates}")
     future_date_range = pd.date_range(start=future_dates[0], end=future_dates[-1], freq='D')
 
-    future_dates_df = pd.DataFrame({
+    future_dates_df = pd.DataFrame({ 
             'datetime': future_date_range,  # pass missing dates
             'open_price': np.nan,
             'high_price': np.nan,
@@ -215,7 +216,7 @@ def load_future_predictions_from_store():
 
     # Retrieve the feature group
     feature_group = feature_store.get_feature_group(
-        name="model_prediction_future",
+        name="model_predictions_future2",
         version=1
     )
 
